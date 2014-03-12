@@ -99,7 +99,6 @@ Collection_S::  Segment, CDE
 #   NDB		- support codelists
 #   (much more, including general cleanup & tuning ...)
 
-require 'edi4r/version'
 require 'enumerator'
 
 BEGIN {

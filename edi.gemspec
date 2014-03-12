@@ -1,10 +1,11 @@
 # coding: utf-8
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
+require 'edi4r/version'
 
 Gem::Specification.new do |spec|
   spec.name          = "edi"
-  spec.version       = EDI::Version
+  spec.version       = EDI::VERSION
   spec.authors       = ["Diego Carrion"]
   spec.email         = ["dc.rec1@gmail.com"]
   spec.summary       = "Fork of edi4r that works with Ruby 2"
