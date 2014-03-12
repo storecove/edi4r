@@ -6,7 +6,7 @@ syntax (ISO 9573) and optionally SAP IDocs.
 
 ## Installation
 
-    gem 'edi4r', github: 'dcrec1/edi4r'
+    gem 'edi', github: 'dcrec1/edi4r'
 
 ## Usage
 
@@ -15,9 +15,8 @@ syntax (ISO 9573) and optionally SAP IDocs.
 
 ### Build a UN/EDIFACT interchange from its character representation in a file:
 
-    ic = nil
-    File.open("received.edi") {|hnd| ic = EDI::E::Interchange.parse( hnd ) }
-    ic.each do |msg|
+    edi = EDI::E::Interchange.parse File.open("received.edi")
+    edi.each do |msg|
       # Process message, here: Just list document numbers from (only) segment BGM
       puts msg['BGM'].first.d1004
     end
