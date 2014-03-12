@@ -3,7 +3,11 @@ lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 
 Gem::Specification.new do |spec|
-  spec.name          = "edi4r"
+  spec.name          = "edi"
+  spec.version       = EDI::Version
+  spec.authors       = ["Diego Carrion"]
+  spec.email         = ["dc.rec1@gmail.com"]
+  spec.summary       = "Fork of edi4r that works with Ruby 2"
   spec.homepage      = ""
   spec.license       = "MIT"
 
