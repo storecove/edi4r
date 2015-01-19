@@ -196,8 +196,8 @@ module EDI::E
 
     alias to_s_orig to_s
 
-    def to_s
-      return to_s_orig unless @format
+    def to_s(*p)
+      return to_s_orig(*p) if !p.empty? || @format.nil?
       case @format.to_s
       when '101'
         "%02d%02d%02d" % [year % 100, mon, day]
