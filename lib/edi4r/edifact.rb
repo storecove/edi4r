@@ -197,24 +197,26 @@ module EDI::E
       dtm
     end
 
-    def to_edifact_s
-      if @format.nil?
+    def to_edifact_s(format=nil)
+      if @format.nil? && format.nil?
         raise EDIArgumentError.new("Requires `format` for formatting EDI-compatible Time")
       end
-      case @format.to_s
+
+      utc_time = getutc
+
+      case (format.to_s || @format.to_s)
       when '101'
-        "%02d%02d%02d" % [year % 100, mon, day]
+        "%02d%02d%02d" % [utc_time.year % 100, utc_time.mon, utc_time.day]
       when '102'
-        "%04d%02d%02d" % [year, mon, day]
+        "%04d%02d%02d" % [utc_time.year, utc_time.mon, utc_time.day]
       when '201'
-        "%02d%02d%02d%02d%02d" % [year % 100, mon, day, hour, min]
+        "%02d%02d%02d%02d%02d" % [utc_time.year % 100, utc_time.mon, utc_time.day, utc_time.hour, utc_time.min]
       when '203'
-        "%04d%02d%02d%02d%02d" % [year, mon, day, hour, min]
+        "%04d%02d%02d%02d%02d" % [utc_time.year, utc_time.mon, utc_time.day, utc_time.hour, utc_time.min]
       when '204'
-        "%04d%02d%02d%02d%02d%2d" % [year, mon, day, hour, min, sec]
+        "%04d%02d%02d%02d%02d%2d" % [utc_time.year, utc_time.mon, utc_time.day, utc_time.hour, utc_time.min, utc_time.sec]
       else # Should never occur
-        raise "Time.edifact: Format #{format
-} not supported - sorry"
+        raise "Time.edifact: Format #{format} not supported - sorry"
       end
     end
   end
