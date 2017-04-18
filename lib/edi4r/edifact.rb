@@ -204,7 +204,14 @@ module EDI::E
 
       utc_time = getutc
 
-      case (format.to_s || @format.to_s)
+      fmt = nil
+      if format.present?
+        fmt = format.to_s
+      else
+        fmt = @format.to_s
+      end
+
+      case fmt
       when '101'
         "%02d%02d%02d" % [utc_time.year % 100, utc_time.mon, utc_time.day]
       when '102'
