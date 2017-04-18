@@ -125,6 +125,9 @@ module EDI::E
   class EDISyntaxError < ArgumentError
   end
 
+  class EDIArgumentError < ArgumentError
+  end
+
   def count_escapes( str, e ) # :nodoc:
     n = 0
     (str.length-1).downto(0) do |i|
@@ -194,10 +197,10 @@ module EDI::E
       dtm
     end
 
-    alias to_s_orig to_s
-
-    def to_s
-      return to_s_orig unless @format
+    def to_edifact_s
+      if @format.nil?
+        raise EDIArgumentError.new("Requires `format` for formatting EDI-compatible Time")
+      end
       case @format.to_s
       when '101'
         "%02d%02d%02d" % [year % 100, mon, day]
