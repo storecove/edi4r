@@ -203,13 +203,7 @@ module EDI::E
       end
 
       utc_time = getutc
-
-      fmt = nil
-      if format.present?
-        fmt = format.to_s
-      else
-        fmt = @format.to_s
-      end
+      fmt = format.present? ? format.to_s : @format.to_s
 
       case fmt
       when '101'

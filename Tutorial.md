@@ -266,12 +266,12 @@ Here is the list of corresponding getter methods:
 Corresponding setters allow you to change all of them.
 Remember to pass ASCII values, not strings. Example:
     
-      pri.cC509.d5118 = 30.1
-      pri.to_s      --> "PRI+AAA:30.1::LIU"
-      ic.una.decimal_sign = ?,
-      pri.to_s      --> "PRI+AAA:30,1::LIU"
-      ic.una.ce_sep = ?/
-      pri.to_s      --> "PRI+AAA/30,1//LIU"
+    pri.cC509.d5118 = 30.1
+    pri.to_s      --> "PRI+AAA:30.1::LIU"
+    ic.una.decimal_sign = ?,
+    pri.to_s      --> "PRI+AAA:30,1::LIU"
+    ic.una.ce_sep = ?/
+    pri.to_s      --> "PRI+AAA/30,1//LIU"
 
 ### Validation
 
