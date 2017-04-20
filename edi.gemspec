@@ -6,8 +6,8 @@ require 'edi4r/version'
 Gem::Specification.new do |spec|
   spec.name          = "edi"
   spec.version       = EDI::VERSION
-  spec.authors       = ["Diego Carrion"]
-  spec.email         = ["dc.rec1@gmail.com"]
+  spec.authors       = ["Richard Fung"]
+  spec.email         = ["richard@flexport.com"]
   spec.summary       = "Fork of edi4r that works with Ruby 2"
   spec.homepage      = ""
   spec.license       = "MIT"

@@ -42,12 +42,12 @@ syntax (ISO 9573) and optionally SAP IDocs.
 
 ## See also
 
-* Background[link:files/lib/edi4r_rb.html] info about data structure and classes.
+* Background (edi4r/README.md) info about data structure and classes.
 
-* A Tutorial[link:files/Tutorial.html] for examples of use.
+* A Tutorial (Tutorial.md) for examples of use.
 
-* A ChangeLog[link:files/ChangeLog.html] will be maintained; it is just starting now.
+* A ChangeLog (ChangeLog) will be maintained; it is just starting now.
 
-* Finally, see TO-DO[link:files/TO-DO.html] for the current wish list.
+* Finally, see TO-DO (TO-DO) for the current wish list.
 
-* This code is put under the Ruby license, see COPYING[link:files/COPYING.html] for details.
+* This code is put under the Ruby license, see COPYING (COPYING) for details.

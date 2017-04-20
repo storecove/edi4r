@@ -1,5 +1,12 @@
 = Change log
 
+== Custom release
+
+=== Changes
+
+* Combine edi-tdid with edi4r (there's no reason to separate the two modules)
+* Disable automatic EDIFACT conversion in Time::to_s
+
 == 0.9.4.1
 
 === News

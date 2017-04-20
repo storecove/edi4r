@@ -1,37 +1,35 @@
-= Tutorial
+# Tutorial
 
-== Getting started
+## Getting started
 
-=== Installation
+### Installation
 
- sudo gem install edi4r
- sudo gem install edi4r-tdid
+      sudo gem install edi4r
 
-=== Require statements
+### Require statements
 
- require "rubygems"
- require "edi4r"         # Try require_gem if this fails on your site
- require "edi4r/edifact"
- require "edi4r-tdid"    # Try require_gem if this fails on your site
+     require "rubygems"
+     require "edi4r"         # Try require_gem if this fails on your site
+     require "edi4r/edifact"
 
 
-== Creating an (outbound) UN/EDIFACT interchange
+## Creating an (outbound) UN/EDIFACT interchange
 
-=== An empty interchange
+### An empty interchange
 
- ic = EDI::E::Interchange.new
+      ic = EDI::E::Interchange.new
 
 creates an empty interchange object with syntax version 3
 and charset UNOB. You can make this a bit more explicit
 by passing parameters as hash components:
 
-  ic = EDI::E::Interchange.new( :version => 3, :charset => 'UNOB' )
+      ic = EDI::E::Interchange.new( :version => 3, :charset => 'UNOB' )
 
 See the source for more parameters.
 
-=== An empty message
+### An empty message
 
-  msg = ic.new_message
+     msg = ic.new_message
 
 creates an empty message in the context of the given interchange,
 i.e. the syntax version, charset, UNA settings, interactive or batch EDI.
@@ -40,17 +38,17 @@ By default, the message type is <tt>ORDERS D.96A</tt>. Select any
 message from any UN/TDID by passing the corresponding parameters
 as hash components:
 
-  msg = ic.new_message( :msg_type=>'ORDERS', :version=>'D', :release=>'96A',
+     msg = ic.new_message( :msg_type=>'ORDERS', :version=>'D', :release=>'96A',
 			:resp_agency=>'UN' )
 
 Hash components which you do not specify are taken from a set of defaults.
 
 
-=== Filling an interchange
+### Filling an interchange
 
 You may add messages to the interchange any time by calling method add():
 
-  ic.add( msg )
+     ic.add( msg )
 
 When adding new messages to an interchange, they get appended to the
 current interchange content. There is no method to insert a message
@@ -62,15 +60,15 @@ Note that each messag gets validated by default when you add it to
 the interchange. If your message needs to be completed only later,
 you may disable validation by calling:
 
-  ic.add( msg, false )
+      ic.add( msg, false )
 
-=== Filling a message
+### Filling a message
 
 A freshly created message is empty, aside from its header and trailer
 which we shall discuss later. Simply create the segments you want to add,
 fill them, and add them to the message:
 
-  seg = msg.new_segment( 'BGM' )
+      seg = msg.new_segment( 'BGM' )
 
 Here, we derived a BGM segment from the current context,
 i.e. an UN/TDID like D.96A which we specified when creating the message given.
@@ -81,7 +79,7 @@ this message type.
 
 Add content to the segment (see below) and add it to the message:
 
-  msg.add( seg )
+     msg.add( seg )
 
 Like with messages added to an interchange, it is your responsibility
 to assure the proper sequence of segments. You will need the UN/EDIFACT
@@ -92,9 +90,9 @@ It is possible to add empty or partially filled segments to a message.
 Just keep a reference to them and fill in their required data elements later.
 
 
-== Accessing Composites and Data Elements
+## Accessing Composites and Data Elements
 
-=== Background
+### Background
 
 While interchanges and messages are basically empty when created,
 segments are not: They come equipped with the composites (CDE, composite
@@ -108,7 +106,7 @@ E.g., a BGM segment from D.96A looks different from a BGM in D.01B.
 These sequences are fixed and cannot/should not be altered after
 creation of a segment or CDE.
 
-=== Getters for CDE
+### Getters for CDE
 
 There is a getter method for each CDE of a segment.
 Its name is simply prefix 'c' and the CDE name.
@@ -116,14 +114,14 @@ Its name is simply prefix 'c' and the CDE name.
 In order to access, say, C002 in segment BGM, the getter
 is named 'c' + 'C002':
 
-  cde = seg.cC002
+    cde = seg.cC002
 
 (See below how to handle arrays)
 
 In most cases you'll need the CDE object only to access
 its component data elements. Let's see how that works:
 
-=== Getters for DE values
+### Getters for DE values
 
 During mapping tasks, we normally do not deal with the
 internal organization of DE objects. All we need is access
@@ -134,25 +132,25 @@ a 'd' to the DE name. The result is a method that returns
 the current value of this DE (nil if unassigned), not the
 DE object itself:
 
-  order_number = seg.d1004  if cde.d1001 == 220
+     order_number = seg.d1004  if cde.d1001 == 220
 
 The example shows that this concept is very convenient and works
 both with component DEs in a CDE and plain DEs in a segment.
 
-=== Setters for DE values
+### Setters for DE values
 
 We use the same approach for setters - a DE setter actually
 changes its value, not the DE object itself:
 
-  bgm = msg.new_segment( 'BGM' )
-  bgm.d1004 = '123456ABC'
-  bgm.cC002.d1001 = 220
+      bgm = msg.new_segment( 'BGM' )
+      bgm.d1004 = '123456ABC'
+      bgm.cC002.d1001 = 220
 
 Well, that's both easy and readable! But what about the
 integer assigned to DE 1004? Don't worry - its string value
 is still what we later want to see in the interchange file.
 
-=== Setters for CDE and segments?
+### Setters for CDE and segments?
 
 There is no such thing! A CDE should always be derived
 from its proper context and must not be changed thereafter.
@@ -163,7 +161,7 @@ Does that sound like dictatorship? Well, there *are* ways
 to manipulate CDEs and segments, but that's an advanced 
 and rarely used topic well out of scope of this tutorial ...
 
-=== DE and CDE arrays
+### DE and CDE arrays
 
 Sometimes, a DE occurs multiple times within a segment or CDE,
 and a CDE may occur multiple times within a segment.
@@ -180,18 +178,18 @@ than one instance of the given (C)DE.
 We obtain a whole array of *all* matching (C)DE instead
 and indicate this with a prefix 'a':
 
-  seg = msg.new_segment('PIA')
-  cde_list = seg.aC212
-
-  cde_list[0].d7140 = '54321'
-  cde_list[0].d7143 = 'SA'
-  cde_list[0].d3055 = 91
-
-  cde_list[1].d7140 = ... # etc
-
-  seg = msg.new_segment('NAD')
-  seg.cC080.a3036[0].value = 'E. X. Ample'
-  seg.cC080.a3036[1].value = 'Sales dept.'
+      seg = msg.new_segment('PIA')
+      cde_list = seg.aC212
+    
+      cde_list[0].d7140 = '54321'
+      cde_list[0].d7143 = 'SA'
+      cde_list[0].d3055 = 91
+    
+      cde_list[1].d7140 = ... # etc
+    
+      seg = msg.new_segment('NAD')
+      seg.cC080.a3036[0].value = 'E. X. Ample'
+      seg.cC080.a3036[1].value = 'Sales dept.'
 
 Note that a3036 returns an array of DE objects, not their values!
 We thus use DE setter <tt>value</tt> to actually assign
@@ -205,7 +203,7 @@ would fetch all instances, no matter if some other elements
 occur in between or not.
 
 
-== Building it all together
+## Building it all together
 
 OK, so we keep generating segments, filling their data elements
 with content, and adding them to the message that we are
@@ -216,7 +214,7 @@ eventually get the output, how do we make sure that we have
 not forgotten anything, and how do we deal with the
 service segments (e.g. to define sender and recipient IDs) ?
 
-=== Headers and trailers
+### Headers and trailers
 
 Interchanges and messages are objects which may come with
 a header and trailer segment. In UN/EDIFACT, these are
@@ -234,53 +232,53 @@ that's possible anytime through getters <tt>header</tt> and
 CDE getters and setters. E.g., setting the UNB sender ID 
 works like this:
 
-  ic.header.cS002.d0004 = '1234567'
+     ic.header.cS002.d0004 = '1234567'
 
 Setting the test indicator may look like this:
 
-  ic.header.d0035 = 1
+    ic.header.d0035 = 1
 
-=== UNA handling
+### UNA handling
 
 The pseudo segment UNA commonly introduces an UN/EDIFACT 
 interchange. It is shown there by default, which is a good
 idea in most cases. If you really have to switch it off, use:
 
-  ic.show_una = false
+     ic.show_una = false
 
 It can be easily viewed e.g. by:
 
-  puts ic.una
+      puts ic.una
 
 The six special characters it containes are both readable
 and modifiable. Please note that these characters are represented
 as their ASCII integer codes, not as one-character strings.
 Here is the list of corresponding getter methods:
 
- ce_sep()	# Component data element separator, default ?:
- de_sep()       # Data element separator, default: ?+
- decimal_sign() # Both ?. and ?, are eligible
- esc_char()     # Escape character, default: ??
- rep_sep()      # Repetition occurrence indicator, default:
-                #  ?  (SV1-3), ?* (syntax version 4)
- seg_term()     # Segment terminator, default: ?'
+     ce_sep()	# Component data element separator, default ?:
+     de_sep()       # Data element separator, default: ?+
+     decimal_sign() # Both ?. and ?, are eligible
+     esc_char()     # Escape character, default: ??
+     rep_sep()      # Repetition occurrence indicator, default:
+                    #  ?  (SV1-3), ?* (syntax version 4)
+     seg_term()     # Segment terminator, default: ?'
 
 Corresponding setters allow you to change all of them.
 Remember to pass ASCII values, not strings. Example:
+    
+      pri.cC509.d5118 = 30.1
+      pri.to_s      --> "PRI+AAA:30.1::LIU"
+      ic.una.decimal_sign = ?,
+      pri.to_s      --> "PRI+AAA:30,1::LIU"
+      ic.una.ce_sep = ?/
+      pri.to_s      --> "PRI+AAA/30,1//LIU"
 
-  pri.cC509.d5118 = 30.1
-  pri.to_s      --> "PRI+AAA:30.1::LIU"
-  ic.una.decimal_sign = ?,
-  pri.to_s      --> "PRI+AAA:30,1::LIU"
-  ic.una.ce_sep = ?/
-  pri.to_s      --> "PRI+AAA/30,1//LIU"
-
-=== Validation
+### Validation
 
 Edi4r comes with a set of built-in validation rules. In order to
 validate your interchange, just call
 
-  ic.validate
+     ic.validate
 
 This method will return the number of (recoverable) issues found.
 Error messages and warnings are written to $stderr. There are
@@ -290,7 +288,7 @@ Actually, you may apply method validate() to almost all of the
 EDI objects mentioned so far. However, doing this once for the
 whole interchance will validate everything.
 
-=== Printing and saving
+### Printing and saving
 
 Once our data is validated, we want to send it to our business partner.
 Actually, that's very simple: Output it e.g. to stdout or to a file
@@ -298,25 +296,25 @@ by just printing it! This works nicely, because our EDI objects are
 all equipped with reasonable methods "to_s()".
 
 
-== Processing (inbound) interchanges
+## Processing (inbound) interchanges
 
-=== Building the interchange object
+### Building the interchange object
 
 We build a whole interchange with a single call by passing 
 its character representation as a String or IO object to class method
 parse():
 
-  ic = nil
-  File.open("inbound_01.edi") {|hnd| ic = EDI::E::Interchange.parse( hnd )}
+      ic = nil
+      File.open("inbound_01.edi") {|hnd| ic = EDI::E::Interchange.parse( hnd )}
 
 That's it - from now on we may access all its contents in much the
 same way as we did during generation.
 
-=== Iterating over messages
+### Iterating over messages
 
 Typically we'd like to loop through the messages contained:
 
-  ic.each { |msg|  map_message( msg ) }
+    ic.each { |msg|  map_message( msg ) }
 
 with some suitably created mapping procedure map_message().
 In this context, the interchange is treated as a container
@@ -324,51 +322,53 @@ of messages. We therefore use the standard iterator each().
 
 Actually, index access is also available, as are following
 array-like methods:
- [](int), index(obj), each(&b), find_all(&b), size(),
- length(), first(), last().
+
+     [](int), index(obj), each(&b), find_all(&b), size(),
+     length(), first(), last().
 
 Examples:
-  second_msg = ic[1]
-  last_msg = ic.last
+
+    second_msg = ic[1]
+    last_msg = ic.last
 
 
-=== Awaiting segments of a message
+### Awaiting segments of a message
 
 Similarly, we iterate through the segments of a message. The following
 construction lets you select segments in their proper context
 (which is the segment group):
 
-  def map_message( msg )
-    # do your initialization here, then
-
-    msg.each do |seg|
-      seg_name = seg.name
-      seg_name += ' ' + seg.sg_name if seg.sg_name
-      case seg_name
-      when "BGM"
-        # do this ...
-      when "DTM"
-        # do that ...
-      when 'NAD SG2'
-        # react only if NAD occurs in segment group 2
-
-      # ... etc., finally:
-      default
-        raise "Segment #{seg_name}: Not accounted for!"
+    def map_message( msg )
+      # do your initialization here, then
+  
+      msg.each do |seg|
+        seg_name = seg.name
+        seg_name += ' ' + seg.sg_name if seg.sg_name
+        case seg_name
+        when "BGM"
+          # do this ...
+        when "DTM"
+          # do that ...
+        when 'NAD SG2'
+          # react only if NAD occurs in segment group 2
+  
+        # ... etc., finally:
+        default
+          raise "Segment #{seg_name}: Not accounted for!"
+      end
     end
-  end
 
 If you need to obtain all segments with a given tag, pass the
 tag as a string to the index operator:
 
-  d = msg['DTM']  # Array of all DTM segments, any segment group
+    d = msg['DTM']  # Array of all DTM segments, any segment group
 
 Actually, a message behaves like a container just as an interchange does,
 so the array-like methods listed in the previous section also apply here:
 
-  d = msg.find_all {|seg| seg.name == 'DTM' && seg.sg_name == 'SG20'}
+     d = msg.find_all {|seg| seg.name == 'DTM' && seg.sg_name == 'SG20'}
 
-=== Selecting segment group instances
+### Selecting segment group instances
 
 Iterating over all segments of a message sequentially tends to produce
 cluttered code when messages grow complex. Wouldn't it be nice
@@ -383,17 +383,20 @@ T-shaped "joints". Thus, segments of a segment group are mere
 descendants of their trigger segment in the branching diagram.
 
 Here are some helpful methods to select segments of a group:
-  # ...
-  when 'NAD SG2'
-    map_nad_sg2( seg.children_and_self ) # skip segment COM...
-  # ...
-  when 'LIN SG28'
-    map_item( seg.descendants_and_self )
-  # ...
+ 
+    # ...
+    when 'NAD SG2'
+      map_nad_sg2( seg.children_and_self ) # skip segment COM...
+    # ...
+    when 'LIN SG28'
+      map_item( seg.descendants_and_self )
+    # ...
 
 Methods
-  descendants(), descendants_and_self(), children(), and
-  children_and_self()
+
+      descendants(), descendants_and_self(), children(), and
+      children_and_self()
+
 are inspired by XPath axes. They return an array of segments
 which depend on the given (trigger) segment as their common
 ancestor.
@@ -402,9 +405,9 @@ Using these selectors, writing modular mapping code
 now becomes an easy task.
 
 
-== Peeking into interchanges
+## Peeking into interchanges
 
-=== Background
+### Background
 
 Sometimes we only need to extract some header information
 out of EDI files, e.g. in order to find out whether the content
@@ -416,7 +419,7 @@ the header of the resulting interchange object when we know that
 a given file contains UN/EDIFACT data. However, that would be
 a big waste of resources, especially for large interchanges.
 
-=== Method "peek()" for UN/EDIFACT data
+### Method "peek()" for UN/EDIFACT data
 
 Edi4r instead offers method "peek()". It reads just enought bytes
 from the file to determine its contents and to decode the header.
@@ -426,12 +429,12 @@ is empty except for the header (and a dummy trailer) segment.
 You can then extract any header element you need through the
 usual getters. Example: Find out if the test indicator is set.
 
-  def is_testdata?( hnd )
-    ic = EDI::E::Interchange.peek( hnd )
-    ic.d0035 == '1' || ic.d0035 == 1
-  end
+    def is_testdata?( hnd )
+      ic = EDI::E::Interchange.peek( hnd )
+      ic.d0035 == '1' || ic.d0035 == 1
+    end
 
-=== Auto-detection and implicit decompression
+### Auto-detection and implicit decompression
 
 Regular EDI users need to archive their business data.
 In simple cases, moving interchange files into proper folders
@@ -451,23 +454,23 @@ in order to find it. There is a generic class method
 Consider the following code fragment that assumes
 that ARGV contains the list of files to search:
 
-  require 'zlib'
-
-  found = ARGV.find do |fname|
-            ic = EDI::Interchange.peek(File.open(fname))
-            h = ic.header
-            ic.syntax=='E' && h.cS002.d0004=='xyz' && h.d0020=='ref1234'
-          end
-  ic = EDI::Interchange.parse(File.open(found))
-  # ...
+    require 'zlib'
+  
+    found = ARGV.find do |fname|
+              ic = EDI::Interchange.peek(File.open(fname))
+              h = ic.header
+              ic.syntax=='E' && h.cS002.d0004=='xyz' && h.d0020=='ref1234'
+            end
+    ic = EDI::Interchange.parse(File.open(found))
+    # ...
 
 Note that this code will work with both zipped and
 unzipped data, and with UN/EDIFACT as well as other content. 
 
 
-== XML representation
+## XML representation
 
-=== Background
+### Background
 
 EDI interchanges may be regarded as abstract objects which need
 some representation when stored or exchanged. E.g., UN/EDIFACT
@@ -509,34 +512,35 @@ a line item group). Formal validation through a single generic DTD
 is available, while in-depth validation remains available
 through this library at the abstract level.
 
-=== Generating an XML representation of an interchange
+### Generating an XML representation of an interchange
 
 The current implementation of XML features is built on
 Ruby's REXML module (alternative implementations are conceivable).
 Simply load the additional methods <em>after</em> loading all other
 optional EDI4R modules, then use method "to_xml()" like this:
 
-  # Other require statements, finally:
-  require "edi4r/rexml"
+    # Other require statements, finally:
+    require "edi4r/rexml"
+    require "edi4r/rexml"
+  
+    # Generate your interchange "ic", then:
+    xdoc = REXML::Document.new   # Empty REXML document
+    ic.to_xml( xdoc )            # Fill it
+  
+    # The rest is standard REXML handling. Here, we write the xdoc to a file.
+    # (See REXML::Document.write() for details on indenting)
+    xdoc.write( File.open( 'mydata.xml','w'), 0 )
 
-  # Generate your interchange "ic", then:
-  xdoc = REXML::Document.new   # Empty REXML document
-  ic.to_xml( xdoc )            # Fill it
-
-  # The rest is standard REXML handling. Here, we write the xdoc to a file.
-  # (See REXML::Document.write() for details on indenting)
-  xdoc.write( File.open( 'mydata.xml','w'), 0 )
-
-=== Building an interchange from its XML representation
+### Building an interchange from its XML representation
 
 No matter what EDI standard the interchange represents,
 its corresponding EDI4R object can be re-generated easily.
 Just make sure that you have loaded the corresponding module(s):
 
-  # Other require statements, finally:
-  require "edi4r/rexml"
-
-  ic = EDI::Interchange.parse( File.open('mydata.xml') )
+    # Other require statements, finally:
+    require "edi4r/rexml"
+  
+    ic = EDI::Interchange.parse( File.open('mydata.xml') )
 
 Yes, that's right: It's the same statement that would 
 also load UN/EDIFACT data!
@@ -544,23 +548,23 @@ also load UN/EDIFACT data!
 If you know already what to expect, you might bypass EDI4R's
 auto-detection and directly call one of the parse_xml() methods:
 
-  xdoc = REXML::Document.new( File.open('mydata.xml') )
-  ic = EDI::E::Interchange.parse_xml( xdoc )
+    xdoc = REXML::Document.new( File.open('mydata.xml') )
+    ic = EDI::E::Interchange.parse_xml( xdoc )
 
-=== Utilities: edi2xml.rb, xml2edi.rb
+### Utilities: edi2xml.rb, xml2edi.rb
 
 These two scripts are included to further simplify your transition
 between traditional EDI representation and XML representation.
 They are command-line tools that simply wrap the library calls
 mentioned above. Example:
 
-  $ edi2xml.rb foo.edi > foo.xml
-  $ xml2edi.rb foo.xml > bar.edi
-  $ diff foo.edi bar.edi   # There should be no differences 
+    $ edi2xml.rb foo.edi > foo.xml
+    $ xml2edi.rb foo.xml > bar.edi
+    $ diff foo.edi bar.edi   # There should be no differences 
 
-== Tools
+## Tools
 
-=== editool.rb
+### editool.rb
 
 Use this command-line tool e.g. when you want to 
 * <b>list</b> UN/EDIFACT data in a readable way (one segment per line,
@@ -577,18 +581,18 @@ Thorough validation can be requested optionally. Example:
   $ editool.rb -p *.edi *.xml
 
 
-== Further reading
+## Further reading
 
 A pair of full-blown mappings (inhouse-to-EANCOM, EANCOM-to-inhouse)
 shows in much more detail how to do outbound and inbound mapping.
 See the source codes in the "test" folder!
 
 
-== Misc topics
+## Misc topics
 
 To be supplied later; currently just a room to collect keywords to cover.
 
-=== Debugging and viewing
+### Debugging and viewing
 
   :linebreak, :indented
   inspect()
@@ -596,7 +600,7 @@ To be supplied later; currently just a room to collect keywords to cover.
   Segments: T-nodes, ordinal number, index, occurrence, max. occurrence
   empty?, required?
 
-=== More advances features
+### More advances features
 
   Validation: warnings and exceptions (logging?)
   Add-ons to class Time
@@ -607,3 +611,7 @@ To be supplied later; currently just a room to collect keywords to cover.
 Enjoy,
 
   -- Heinz
+
+Editor,
+
+  -- Richard

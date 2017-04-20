@@ -31,8 +31,6 @@
 
 require "rubygems"
 require_gem "edi4r"
-require_gem "edi4r-tdid"
-#require_gem "edi4r-idoc"
 require "edi4r/edifact"
 require "edi4r/rexml"
 

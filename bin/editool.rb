@@ -16,7 +16,6 @@ if $DEBUG  # Include statement during test setup:
   require 'edi4r'
   require 'edi4r/edifact'
   require "edi4r/rexml"
-  require_gem "edi4r-tdid"
 else       # Regular include statements:
   require "rubygems"
   require "edi4r"
@@ -26,7 +25,6 @@ else       # Regular include statements:
   end
   require "edi4r/edifact"
   require "edi4r/rexml"
-  require "edi4r-tdid"
 end
 require 'zlib'
 require 'getoptlong'
