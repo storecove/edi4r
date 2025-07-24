@@ -864,7 +864,7 @@ module EDI
         #
         # Charset check
         #
-        if (pos = (value =~ root.illegal_charset_pattern))# != nil
+        if (pos = (value.to_s =~ root.illegal_charset_pattern))# != nil
           warn "#{location}: Illegal character: #{value[pos].chr}"
           err_count += 1
         end
